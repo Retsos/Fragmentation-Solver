@@ -111,7 +111,7 @@ export const Explainer = ({ packetSize, mtu }: ExplainerProps) => {
                                         Βήμα 3: Υπολογισμός Offset (Μονάδες των 8 bytes)
                                     </h4>
                                     <p className="opacity-80 text-green-800">
-                                        Το πεδίο offset μετριέται σε μονάδες των 8 bytes, γι' αυτό κάνουμε ακέραια διαίρεση (div):
+                                        {"Το πεδίο offset μετριέται σε μονάδες των 8 bytes, γι' αυτό κάνουμε ακέραια διαίρεση (div):"}
                                     </p>
                                     <div className="text-lg font-bold text-center py-2 text-green-700">
                                         {maxPayloadPerFrag} div 8 = <span className="text-yellow-700">{offsetStep}</span>
@@ -173,7 +173,7 @@ export const Explainer = ({ packetSize, mtu }: ExplainerProps) => {
                                             <strong>MF:</strong> MF=1 παντού, εκτός του τελευταίου που είναι MF=0.
                                         </li>
                                         <li>
-                                            <strong>ID:</strong> Παντού ίδιο (π.χ. 'X').
+                                            <strong>ID:</strong>{` Παντού ίδιο (π.χ. 'X').`}
                                         </li>
                                     </ul>
                                 </div>
