@@ -74,9 +74,9 @@ Open the portal: Navigate to http://localhost:3000.
 👥 Ops / Credits
 This tool is a collaboration between low-level logic and high-level visuals.
 
-[Retsos]: Logic Core & C Implementation. The one who talks to the metal.
+[MasterTsif]: Logic Core & C Implementation. The one who talks to the metal.
 
-[MasterTsif]: Frontend Architecture, UI/UX & Visuals. The one who makes the Matrix look good.
+[Retsos]: Frontend Architecture, UI/UX & Visuals. The one who makes the Matrix look good.
 
 📄 License
 Distributed under the MIT License. Use it to pass your networks exam, debug your router, or impress your friends who think HTML is programming.
