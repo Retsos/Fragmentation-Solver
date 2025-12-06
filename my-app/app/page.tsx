@@ -40,13 +40,14 @@ export default function IPFragCalculatorMatrix() {
 
         {/* Scanlines: Πολύ πιο διακριτικά (opacity-5) */}
         <div
-          className="absolute inset-0 pointer-events-none opacity-5"
-          style={{
-            backgroundImage: "linear-gradient(to bottom, transparent 50%, rgba(20, 83, 45, 0.3) 51%)",
-            backgroundSize: "100% 4px"
-          }}
+          className="
+            absolute inset-0 
+            pointer-events-none 
+            opacity-5 
+            bg-[linear-gradient(to_bottom,transparent_50%,rgba(20,83,45,0.3)_51%)]
+            bg-[length:100%_4px]
+          "
         />
-
         <CardHeader className="border-b border-green-900/20 pb-4">
           <div className="flex items-center justify-between">
             <div>
@@ -122,7 +123,7 @@ export default function IPFragCalculatorMatrix() {
             ) : fragments ? (
               <div className="w-full flex flex-col gap-4">
                 <ResultsTable fragments={fragments} />
-                <Explainer packetSize={Number(ipPacketSize)} mtu={Number(mtu)}/>
+                <Explainer packetSize={Number(ipPacketSize)} mtu={Number(mtu)} />
               </div>
             ) : (
               <StatusDisplay />
