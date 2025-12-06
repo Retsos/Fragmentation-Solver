@@ -146,19 +146,6 @@ export const Explainer = ({ packetSize, mtu }: ExplainerProps) => {
 
                                         {/* ΒΗΜΑ 4 */}
                                         <div className="space-y-2 relative z-10">
-                                            <h4 className="font-bold text-green-600 border-b border-green-900/30 inline-block">
-                                                Βήμα 4: Τελικό Μέγεθος Full Fragment
-                                            </h4>
-                                            <p className="opacity-80">
-                                                Κάθε πλήρες fragment που βρήκαμε θα έχει:
-                                            </p>
-                                            <div className="pl-4 border-l-2 border-green-900/30 text-green-800">
-                                                <p>{alignedDataPerFrag} (Data) + 20 (Header) = <span className="text-green-600 font-bold">{fullFragLength} bytes</span> (Length)</p>
-                                            </div>
-                                        </div>
-
-                                        {/* ΒΗΜΑ 4 */}
-                                        <div className="space-y-2 relative z-10">
                                             <h4 className="font-bold text-green-800 border-b border-green-900/30 inline-block">
                                                 Βήμα 4: Τελικό Μέγεθος Full Fragment
                                             </h4>
