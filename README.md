@@ -81,4 +81,4 @@ This tool is a collaboration between low-level logic and high-level visuals.
 📄 License
 Distributed under the MIT License. Use it to pass your networks exam, debug your router, or impress your friends who think HTML is programming.
 
-<p align="center"> <span style="color: #15803d; font-family: monospace;">SYSTEM READY // END OF LINE_</span> </p>
+<p align="center"> <span style="color: #15803d; font-family: monospace;">SYSTEM READY
