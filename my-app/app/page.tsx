@@ -57,7 +57,7 @@ export default function IPFragCalculatorMatrix() {
                 IPv4 Fragmentation Calculator
               </CardTitle>
               <CardDescription className="mt-1 italic text-green-800">
-                "Σπάσε τα πακέτα σε κομμάτια, όπως η ζωή έσπασε τα όνειρά μας."
+                {'"Σπάσε τα πακέτα σε κομμάτια, όπως η ζωή έσπασε τα όνειρά μας."'}
               </CardDescription>
             </div>
             <Calculator className="w-8 h-8 text-green-900" />
