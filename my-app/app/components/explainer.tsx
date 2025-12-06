@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, BookOpen } from "lucide-react";
+import { ChevronDown, BookOpen, Info } from "lucide-react";
 
 interface ExplainerProps {
     packetSize: number;
@@ -30,7 +30,7 @@ export const Explainer = ({ packetSize, mtu }: ExplainerProps) => {
 
     // ΕΛΕΓΧΟΣ: Τέλεια διαίρεση;
     const isPerfectFit = remainingData === 0;
-
+    const needsFragmentation = packetSize > mtu;
     return (
         <div className="w-full mt-6 pt-4 font-mono">
             <motion.button
@@ -79,139 +79,156 @@ export const Explainer = ({ packetSize, mtu }: ExplainerProps) => {
                                 {/* Scanline decoration */}
                                 <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(to_bottom,transparent_50%,rgba(20,83,45,0.05)_51%)] bg-[length:100%_3px]" />
 
-                                {/* ΒΗΜΑ 1 */}
-                                <div className="space-y-2 relative z-10">
-                                    <h4 className="font-bold text-green-600 border-b border-green-900/30 inline-block">
-                                        Βήμα 1: Ανάλυση IP Πακέτου
-                                    </h4>
+                                <div className="flex gap-3 items-start bg-green-900/10 p-3 rounded border border-green-900/20 text-xs sm:text-sm">
+                                    <Info className="w-4 h-4 mt-0.5 text-green-600 shrink-0" />
                                     <p className="opacity-80">
-                                        Έστω IP πακέτο μεγέθους <span className="text-green-600 font-bold">{packetSize} bytes</span>.
-                                    </p>
-                                    <div className="pl-4 border-l-2 border-green-900/30 text-green-800">
-                                        <p>Αφαιρούμε την επικεφαλίδα (Header):</p>
-                                        <p>{packetSize} - 20 = <span className="text-green-600 font-bold">{totalData} bytes Δεδομένων (Data)</span></p>
-                                    </div>
-                                </div>
-
-                                {/* ΒΗΜΑ 2 */}
-                                <div className="space-y-2 relative z-10">
-                                    <h4 className="font-bold text-green-600 border-b border-green-900/30 inline-block">
-                                        Βήμα 2: Ανάλυση MTU Ζεύξης
-                                    </h4>
-                                    <p className="opacity-80">
-                                        MTU Ζεύξης = <span className="text-green-600 font-bold">{mtu} bytes</span>.
-                                    </p>
-                                    <div className="pl-4 border-l-2 border-green-900/30 text-green-800">
-                                        <p>IP Fragment (header + data) = {mtu} bytes max.</p>
-                                        <p>Άρα μέγιστα δεδομένα ανά fragment:</p>
-                                        <p>{mtu} - 20 = <span className="text-green-600 font-bold">{maxPayloadPerFrag} bytes</span> (Θεωρητικό max)</p>
-                                    </div>
-                                </div>
-
-                                {/* ΒΗΜΑ 3 */}
-                                <div className="space-y-2 bg-green-950/10 p-3 rounded border border-green-900/20 relative z-10">
-                                    <h4 className="font-bold text-yellow-600/80 border-b border-yellow-900/10 inline-block">
-                                        Βήμα 3: Υπολογισμός Offset (Μονάδες των 8 bytes)
-                                    </h4>
-                                    <p className="opacity-80 text-green-800">
-                                        {"Το πεδίο offset μετριέται σε μονάδες των 8 bytes, γι' αυτό κάνουμε ακέραια διαίρεση (div):"}
-                                    </p>
-                                    <div className="text-lg font-bold text-center py-2 text-green-700">
-                                        {maxPayloadPerFrag} div 8 = <span className="text-yellow-700">{offsetStep}</span>
-                                    </div>
-                                    <p className="opacity-80 text-green-800">
-                                        Συνεπώς, κάθε <strong>Full Fragment</strong> θα έχει δεδομένα:
-                                    </p>
-                                    <div className="text-center font-bold text-green-700">
-                                        8 * {offsetStep} = <span className="text-green-600">{alignedDataPerFrag} bytes</span>
-                                    </div>
-                                    <p className="text-xs text-green-800/60 mt-2 italic">
-                                        *Αυτό είναι το νούμερο που χρησιμοποιούμε για τα δεδομένα, όχι το {maxPayloadPerFrag}.
+                                        <span className="font-bold text-green-600">Σημείωση:</span> Η παρακάτω διαδικασία (διαίρεση με 8, offsets κλπ) εφαρμόζεται <strong>μόνο</strong> όταν το Πακέτο είναι μεγαλύτερο από το MTU ({packetSize} &gt; {mtu}).
+                                        {!needsFragmentation && (
+                                            <span className="block mt-1 text-yellow-700/80 font-bold">
+                                                * Στην προκειμένη περίπτωση το πακέτο χωράει ολόκληρο, άρα δεν γίνεται κατακερματισμός.
+                                            </span>
+                                        )}
                                     </p>
                                 </div>
 
-                                {/* ΒΗΜΑ 4 */}
-                                <div className="space-y-2 relative z-10">
-                                    <h4 className="font-bold text-green-600 border-b border-green-900/30 inline-block">
-                                        Βήμα 4: Τελικό Μέγεθος Full Fragment
-                                    </h4>
-                                    <p className="opacity-80">
-                                        Κάθε πλήρες fragment που βρήκαμε θα έχει:
-                                    </p>
-                                    <div className="pl-4 border-l-2 border-green-900/30 text-green-800">
-                                        <p>{alignedDataPerFrag} (Data) + 20 (Header) = <span className="text-green-600 font-bold">{fullFragLength} bytes</span> (Length)</p>
-                                    </div>
-                                </div>
-
-                                {/* ΒΗΜΑ 4 */}
-                                <div className="space-y-2 relative z-10">
-                                    <h4 className="font-bold text-green-800 border-b border-green-900/30 inline-block">
-                                        Βήμα 4: Τελικό Μέγεθος Full Fragment
-                                    </h4>
-                                    <p className="opacity-80">
-                                        Κάθε πλήρες fragment που βρήκαμε θα έχει:
-                                    </p>
-                                    <div className="pl-4 border-l-2 border-green-900/30 text-green-800">
-                                        <p>{alignedDataPerFrag} (Data) + 20 (Header) = <span className="text-green-500 font-bold">{fullFragLength} bytes</span> (Length)</p>
-                                    </div>
-                                </div>
-
-                                {/* ΒΗΜΑ 5 - ΜΕ ΤΗ ΔΙΟΡΘΩΣΗ ΓΙΑ ΤΕΛΕΙΑ ΔΙΑΙΡΕΣΗ */}
-                                <div className="space-y-2 relative z-10">
-                                    <h4 className="font-bold text-green-800 border-b border-green-900/30 inline-block">
-                                        Βήμα 5: {isPerfectFit ? "Έλεγχος Τέλεια Διαίρεσης" : "Τι μένει για το τέλος;"}
-                                    </h4>
-
-                                    {isPerfectFit ? (
-                                        // Περίπτωση: Τέλεια διαίρεση (Remaining 0)
-                                        <div className="pl-4 border-l-2 border-yellow-900/20 text-green-800">
-                                            <p>Έχουμε {numFullFrags} πλήρη fragments.</p>
-                                            <p>{numFullFrags} * {alignedDataPerFrag} = <span className="text-green-500 font-bold">{dataSentInFullFrags} bytes</span></p>
-                                            <p className="mt-2 text-yellow-700 font-bold text-xs uppercase tracking-wider">
-                                                ⚠️ Παρατηρηση: {totalData} - {dataSentInFullFrags} = 0 bytes.
+                                {needsFragmentation ? (
+                                    <>
+                                        {/* ΒΗΜΑ 1 */}
+                                        <div className="space-y-2 relative z-10">
+                                            <h4 className="font-bold text-green-600 border-b border-green-900/30 inline-block">
+                                                Βήμα 1: Ανάλυση IP Πακέτου
+                                            </h4>
+                                            <p className="opacity-80">
+                                                Έστω IP πακέτο μεγέθους <span className="text-green-600 font-bold">{packetSize} bytes</span>.
                                             </p>
-                                            <p className="opacity-80 mt-1">
-                                                Τα δεδομένα χώρεσαν ακριβώς. Δεν χρειάζεται επιπλέον μικρό fragment.
-                                                Το τελευταίο Full Fragment είναι και το τελευταίο πακέτο (MF=0).
+                                            <div className="pl-4 border-l-2 border-green-900/30 text-green-800">
+                                                <p>Αφαιρούμε την επικεφαλίδα (Header):</p>
+                                                <p>{packetSize} - 20 = <span className="text-green-600 font-bold">{totalData} bytes Δεδομένων (Data)</span></p>
+                                            </div>
+                                        </div>
+
+                                        {/* ΒΗΜΑ 2 */}
+                                        <div className="space-y-2 relative z-10">
+                                            <h4 className="font-bold text-green-600 border-b border-green-900/30 inline-block">
+                                                Βήμα 2: Ανάλυση MTU Ζεύξης
+                                            </h4>
+                                            <p className="opacity-80">
+                                                MTU Ζεύξης = <span className="text-green-600 font-bold">{mtu} bytes</span>.
+                                            </p>
+                                            <div className="pl-4 border-l-2 border-green-900/30 text-green-800">
+                                                <p>IP Fragment (header + data) = {mtu} bytes max.</p>
+                                                <p>Άρα μέγιστα δεδομένα ανά fragment:</p>
+                                                <p>{mtu} - 20 = <span className="text-green-600 font-bold">{maxPayloadPerFrag} bytes</span> (Θεωρητικό max)</p>
+                                            </div>
+                                        </div>
+
+                                        {/* ΒΗΜΑ 3 */}
+                                        <div className="space-y-2 bg-green-950/10 p-3 rounded border border-green-900/20 relative z-10">
+                                            <h4 className="font-bold text-yellow-600/80 border-b border-yellow-900/10 inline-block">
+                                                Βήμα 3: Υπολογισμός Offset (Μονάδες των 8 bytes)
+                                            </h4>
+                                            <p className="opacity-80 text-green-800">
+                                                {"Το πεδίο offset μετριέται σε μονάδες των 8 bytes, γι' αυτό κάνουμε ακέραια διαίρεση (div):"}
+                                            </p>
+                                            <div className="text-lg font-bold text-center py-2 text-green-700">
+                                                {maxPayloadPerFrag} div 8 = <span className="text-yellow-700">{offsetStep}</span>
+                                            </div>
+                                            <p className="opacity-80 text-green-800">
+                                                Συνεπώς, κάθε <strong>Full Fragment</strong> θα έχει δεδομένα:
+                                            </p>
+                                            <div className="text-center font-bold text-green-700">
+                                                8 * {offsetStep} = <span className="text-green-600">{alignedDataPerFrag} bytes</span>
+                                            </div>
+                                            <p className="text-xs text-green-800/60 mt-2 italic">
+                                                *Αυτό είναι το νούμερο που χρησιμοποιούμε για τα δεδομένα, όχι το {maxPayloadPerFrag}.
                                             </p>
                                         </div>
-                                    ) : (
-                                        // Περίπτωση: Κανονική (Υπάρχει υπόλοιπο)
-                                        <>
-                                            <p className="opacity-80">
-                                                Μετά από <strong>{numFullFrags}</strong> full fragments έχουμε στείλει:
-                                            </p>
-                                            <div className="pl-4 border-l-2 border-green-900/30 text-green-800">
-                                                <p>{numFullFrags} * {alignedDataPerFrag} = <span className="text-green-500 font-bold">{dataSentInFullFrags} bytes</span></p>
-                                            </div>
-                                            <p className="opacity-80 mt-2">
-                                                Απομένουν για το τελευταίο fragment:
-                                            </p>
-                                            <div className="pl-4 border-l-2 border-green-900/30 text-green-800">
-                                                <p>{totalData} - {dataSentInFullFrags} = <span className="text-green-500 font-bold">{remainingData} bytes</span></p>
-                                                <p>Μέγεθος τελευταίου (Length): {remainingData} + 20 = <strong>{lastFragLength} bytes</strong></p>
-                                            </div>
-                                        </>
-                                    )}
-                                </div>
 
-                                {/* ΣΥΝΟΨΗ */}
-                                <div className="space-y-2 bg-black/40 p-3 rounded relative z-10 border border-green-900/10">
-                                    <h4 className="font-bold text-green-800 border-b border-green-900/30 inline-block">
-                                        Σύνοψη για τον Πίνακα
-                                    </h4>
-                                    <ul className="list-disc list-inside space-y-1 opacity-80 text-xs sm:text-sm text-green-700">
-                                        <li>
-                                            <strong>Offset:</strong> Για n = αριθμός fragment, έχω <code className="text-yellow-700">Offset = (n-1) * {offsetStep}</code>
-                                        </li>
-                                        <li>
-                                            <strong>MF:</strong> MF=1 παντού, εκτός του τελευταίου που είναι MF=0.
-                                        </li>
-                                        <li>
-                                            <strong>ID:</strong>{` Παντού ίδιο (π.χ. 'X').`}
-                                        </li>
-                                    </ul>
-                                </div>
+                                        {/* ΒΗΜΑ 4 */}
+                                        <div className="space-y-2 relative z-10">
+                                            <h4 className="font-bold text-green-600 border-b border-green-900/30 inline-block">
+                                                Βήμα 4: Τελικό Μέγεθος Full Fragment
+                                            </h4>
+                                            <p className="opacity-80">
+                                                Κάθε πλήρες fragment που βρήκαμε θα έχει:
+                                            </p>
+                                            <div className="pl-4 border-l-2 border-green-900/30 text-green-800">
+                                                <p>{alignedDataPerFrag} (Data) + 20 (Header) = <span className="text-green-600 font-bold">{fullFragLength} bytes</span> (Length)</p>
+                                            </div>
+                                        </div>
+
+                                        {/* ΒΗΜΑ 4 */}
+                                        <div className="space-y-2 relative z-10">
+                                            <h4 className="font-bold text-green-800 border-b border-green-900/30 inline-block">
+                                                Βήμα 4: Τελικό Μέγεθος Full Fragment
+                                            </h4>
+                                            <p className="opacity-80">
+                                                Κάθε πλήρες fragment που βρήκαμε θα έχει:
+                                            </p>
+                                            <div className="pl-4 border-l-2 border-green-900/30 text-green-800">
+                                                <p>{alignedDataPerFrag} (Data) + 20 (Header) = <span className="text-green-500 font-bold">{fullFragLength} bytes</span> (Length)</p>
+                                            </div>
+                                        </div>
+
+                                        {/* ΒΗΜΑ 5 - ΜΕ ΤΗ ΔΙΟΡΘΩΣΗ ΓΙΑ ΤΕΛΕΙΑ ΔΙΑΙΡΕΣΗ */}
+                                        <div className="space-y-2 relative z-10">
+                                            <h4 className="font-bold text-green-800 border-b border-green-900/30 inline-block">
+                                                Βήμα 5: {isPerfectFit ? "Έλεγχος Τέλεια Διαίρεσης" : "Τι μένει για το τέλος;"}
+                                            </h4>
+
+                                            {isPerfectFit ? (
+                                                // Περίπτωση: Τέλεια διαίρεση (Remaining 0)
+                                                <div className="pl-4 border-l-2 border-yellow-900/20 text-green-800">
+                                                    <p>Έχουμε {numFullFrags} πλήρη fragments.</p>
+                                                    <p>{numFullFrags} * {alignedDataPerFrag} = <span className="text-green-500 font-bold">{dataSentInFullFrags} bytes</span></p>
+                                                    <p className="mt-2 text-yellow-700 font-bold text-xs uppercase tracking-wider">
+                                                        ⚠️ Παρατηρηση: {totalData} - {dataSentInFullFrags} = 0 bytes.
+                                                    </p>
+                                                    <p className="opacity-80 mt-1">
+                                                        Τα δεδομένα χώρεσαν ακριβώς. Δεν χρειάζεται επιπλέον μικρό fragment.
+                                                        Το τελευταίο Full Fragment είναι και το τελευταίο πακέτο (MF=0).
+                                                    </p>
+                                                </div>
+                                            ) : (
+                                                // Περίπτωση: Κανονική (Υπάρχει υπόλοιπο)
+                                                <>
+                                                    <p className="opacity-80">
+                                                        Μετά από <strong>{numFullFrags}</strong> full fragments έχουμε στείλει:
+                                                    </p>
+                                                    <div className="pl-4 border-l-2 border-green-900/30 text-green-800">
+                                                        <p>{numFullFrags} * {alignedDataPerFrag} = <span className="text-green-500 font-bold">{dataSentInFullFrags} bytes</span></p>
+                                                    </div>
+                                                    <p className="opacity-80 mt-2">
+                                                        Απομένουν για το τελευταίο fragment:
+                                                    </p>
+                                                    <div className="pl-4 border-l-2 border-green-900/30 text-green-800">
+                                                        <p>{totalData} - {dataSentInFullFrags} = <span className="text-green-500 font-bold">{remainingData} bytes</span></p>
+                                                        <p>Μέγεθος τελευταίου (Length): {remainingData} + 20 = <strong>{lastFragLength} bytes</strong></p>
+                                                    </div>
+                                                </>
+                                            )}
+                                        </div>
+
+                                        {/* ΣΥΝΟΨΗ */}
+                                        <div className="space-y-2 bg-black/40 p-3 rounded relative z-10 border border-green-900/10">
+                                            <h4 className="font-bold text-green-800 border-b border-green-900/30 inline-block">
+                                                Σύνοψη για τον Πίνακα
+                                            </h4>
+                                            <ul className="list-disc list-inside space-y-1 opacity-80 text-xs sm:text-sm text-green-700">
+                                                <li>
+                                                    <strong>Offset:</strong> Για n = αριθμός fragment, έχω <code className="text-yellow-700">Offset = (n-1) * {offsetStep}</code>
+                                                </li>
+                                                <li>
+                                                    <strong>MF:</strong> MF=1 παντού, εκτός του τελευταίου που είναι MF=0.
+                                                </li>
+                                                <li>
+                                                    <strong>ID:</strong>{` Παντού ίδιο (π.χ. 'X').`}
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                    </>
+                                ) : null}
                             </div>
                         </div>
                     </motion.div>

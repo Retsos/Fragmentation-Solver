@@ -76,7 +76,7 @@ export default function IPFragCalculatorMatrix() {
                 type="number"
                 placeholder={`Range: ${IP_HEADER} - 65535`}
                 // Inputs: Dark background, dim text
-                className={`font-mono bg-[#0a0a0a] placeholder:text-green-900/30 text-green-500 border-green-900/30 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none transition-all duration-300
+                className={`font-mono bg-[#0a0a0a] placeholder:text-green-900/70 text-green-500 border-green-900/30 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none transition-all duration-300
                   ${ipPacketSize !== "" && (Number(ipPacketSize) < IP_HEADER || Number(ipPacketSize) > 65535)
                     ? "border-red-900/50 focus-visible:ring-red-900/50 text-red-700"
                     : "focus-visible:ring-green-900/50 focus-visible:border-green-800"
@@ -98,7 +98,7 @@ export default function IPFragCalculatorMatrix() {
                 id="mtu"
                 type="number"
                 placeholder={`Range: ${IP_HEADER + 8} - 1500`}
-                className={`font-mono bg-[#0a0a0a] placeholder:text-green-900/30 text-green-500 border-green-900/30 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none transition-all duration-300
+                className={`font-mono bg-[#0a0a0a] placeholder:text-green-900/70 text-green-500 border-green-900/30 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none transition-all duration-300
                   ${mtu !== "" && (Number(mtu) < IP_HEADER + 8 || Number(mtu) > 1500)
                     ? "border-red-900/50 focus-visible:ring-red-900/50 text-red-700"
                     : "focus-visible:ring-green-900/50 focus-visible:border-green-800"
