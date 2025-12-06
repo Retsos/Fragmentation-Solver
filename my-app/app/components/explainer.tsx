@@ -28,6 +28,9 @@ export const Explainer = ({ packetSize, mtu }: ExplainerProps) => {
     const lastFragLength = remainingData + IP_HEADER;
     // -------------------
 
+    // ΕΛΕΓΧΟΣ: Τέλεια διαίρεση;
+    const isPerfectFit = remainingData === 0;
+
     return (
         <div className="w-full mt-6 pt-4 font-mono">
             <motion.button
@@ -140,29 +143,61 @@ export const Explainer = ({ packetSize, mtu }: ExplainerProps) => {
                                     </div>
                                 </div>
 
-                                {/* ΒΗΜΑ 5 */}
+                                {/* ΒΗΜΑ 4 */}
                                 <div className="space-y-2 relative z-10">
-                                    <h4 className="font-bold text-green-600 border-b border-green-900/30 inline-block">
-                                        Βήμα 5: Τι μένει για το τέλος;
+                                    <h4 className="font-bold text-green-800 border-b border-green-900/30 inline-block">
+                                        Βήμα 4: Τελικό Μέγεθος Full Fragment
                                     </h4>
                                     <p className="opacity-80">
-                                        Μετά από <strong>{numFullFrags}</strong> full fragments έχουμε στείλει:
+                                        Κάθε πλήρες fragment που βρήκαμε θα έχει:
                                     </p>
                                     <div className="pl-4 border-l-2 border-green-900/30 text-green-800">
-                                        <p>{numFullFrags} * {alignedDataPerFrag} = <span className="text-green-600 font-bold">{dataSentInFullFrags} bytes</span></p>
+                                        <p>{alignedDataPerFrag} (Data) + 20 (Header) = <span className="text-green-500 font-bold">{fullFragLength} bytes</span> (Length)</p>
                                     </div>
-                                    <p className="opacity-80 mt-2">
-                                        Απομένουν για το τελευταίο fragment:
-                                    </p>
-                                    <div className="pl-4 border-l-2 border-green-900/30 text-green-800">
-                                        <p>{totalData} - {dataSentInFullFrags} = <span className="text-green-600 font-bold">{remainingData} bytes</span></p>
-                                        <p>Μέγεθος τελευταίου (Length): {remainingData} + 20 = <strong>{lastFragLength} bytes</strong></p>
-                                    </div>
+                                </div>
+
+                                {/* ΒΗΜΑ 5 - ΜΕ ΤΗ ΔΙΟΡΘΩΣΗ ΓΙΑ ΤΕΛΕΙΑ ΔΙΑΙΡΕΣΗ */}
+                                <div className="space-y-2 relative z-10">
+                                    <h4 className="font-bold text-green-800 border-b border-green-900/30 inline-block">
+                                        Βήμα 5: {isPerfectFit ? "Έλεγχος Τέλεια Διαίρεσης" : "Τι μένει για το τέλος;"}
+                                    </h4>
+
+                                    {isPerfectFit ? (
+                                        // Περίπτωση: Τέλεια διαίρεση (Remaining 0)
+                                        <div className="pl-4 border-l-2 border-yellow-900/20 text-green-800">
+                                            <p>Έχουμε {numFullFrags} πλήρη fragments.</p>
+                                            <p>{numFullFrags} * {alignedDataPerFrag} = <span className="text-green-500 font-bold">{dataSentInFullFrags} bytes</span></p>
+                                            <p className="mt-2 text-yellow-700 font-bold text-xs uppercase tracking-wider">
+                                                ⚠️ Παρατηρηση: {totalData} - {dataSentInFullFrags} = 0 bytes.
+                                            </p>
+                                            <p className="opacity-80 mt-1">
+                                                Τα δεδομένα χώρεσαν ακριβώς. Δεν χρειάζεται επιπλέον μικρό fragment.
+                                                Το τελευταίο Full Fragment είναι και το τελευταίο πακέτο (MF=0).
+                                            </p>
+                                        </div>
+                                    ) : (
+                                        // Περίπτωση: Κανονική (Υπάρχει υπόλοιπο)
+                                        <>
+                                            <p className="opacity-80">
+                                                Μετά από <strong>{numFullFrags}</strong> full fragments έχουμε στείλει:
+                                            </p>
+                                            <div className="pl-4 border-l-2 border-green-900/30 text-green-800">
+                                                <p>{numFullFrags} * {alignedDataPerFrag} = <span className="text-green-500 font-bold">{dataSentInFullFrags} bytes</span></p>
+                                            </div>
+                                            <p className="opacity-80 mt-2">
+                                                Απομένουν για το τελευταίο fragment:
+                                            </p>
+                                            <div className="pl-4 border-l-2 border-green-900/30 text-green-800">
+                                                <p>{totalData} - {dataSentInFullFrags} = <span className="text-green-500 font-bold">{remainingData} bytes</span></p>
+                                                <p>Μέγεθος τελευταίου (Length): {remainingData} + 20 = <strong>{lastFragLength} bytes</strong></p>
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
 
                                 {/* ΣΥΝΟΨΗ */}
                                 <div className="space-y-2 bg-black/40 p-3 rounded relative z-10 border border-green-900/10">
-                                    <h4 className="font-bold text-green-600 border-b border-green-900/30 inline-block">
+                                    <h4 className="font-bold text-green-800 border-b border-green-900/30 inline-block">
                                         Σύνοψη για τον Πίνακα
                                     </h4>
                                     <ul className="list-disc list-inside space-y-1 opacity-80 text-xs sm:text-sm text-green-700">
