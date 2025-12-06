@@ -148,7 +148,7 @@ export default function IPFragCalculatorMatrix() {
             variant="outline"
             size="sm"
             onClick={handleReset}
-            className="gap-2 border-green-900/20 bg-transparent text-green-800 hover:bg-green-900/10 hover:text-green-600 hover:border-green-800 transition-all"
+            className="gap-2 border-green-900/20 cursor-pointer bg-transparent text-green-800 hover:bg-green-900/10 hover:text-green-600 hover:border-green-800 transition-all"
           >
             <Trash2 className="w-4 h-4" />
             Reset
