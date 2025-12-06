@@ -6,20 +6,21 @@ interface ResultsTableProps {
 
 export const ResultsTable = ({ fragments }: ResultsTableProps) => {
     return (
-        <div className="w-full text-left border-collapse font-mono text-green-500">
-            <table className="w-full">
+        // 1. ΠΡΟΣΘΗΚΗ: overflow-x-auto για να ενεργοποιηθεί το scrollbar
+        <div className="w-full overflow-x-auto border-collapse font-mono text-green-700 pb-2">
+
+            {/* 2. ΠΡΟΣΘΗΚΗ: min-w-[600px] για να αναγκάσουμε το scroll σε μικρά κινητά */}
+            <table className="w-full min-w-[300px]">
                 <thead>
-                    <tr className="text-green-700 border-b border-green-900">
-                        <th className="py-2 px-4 text-left font-bold">#</th>
-                        <th className="py-2 px-4 text-left font-bold">
-                            Length <span className="text-[10px] text-green-800 font-normal">(Total)</span>
+                    <tr className="text-green-800 border-b border-green-900/20">
+                        <th className="py-2 px-4 text-left font-bold opacity-70">#</th>
+                        <th className="py-2 px-4 text-left font-bold opacity-70">
+                            Length <span className="text-[10px] font-normal opacity-50">(Total)</span>
                         </th>
-                        <th className="py-2 px-4 text-left font-bold">ID</th>
-                        <th className="py-2 px-4 text-left font-bold">
-                            MF <span className="text-[10px] text-green-800 font-normal">(More Frag)</span>
-                        </th>
-                        <th className="py-2 px-4 text-left font-bold">
-                            Offset <span className="text-[10px] text-green-800 font-normal">(x8 bytes)</span>
+                        <th className="py-2 px-4 text-left font-bold opacity-70">ID</th>
+                        <th className="py-2 px-4 text-left font-bold opacity-70">MF</th>
+                        <th className="py-2 px-4 text-left font-bold opacity-70">
+                            Offset <span className="text-[10px] font-normal opacity-50">(x8)</span>
                         </th>
                     </tr>
                 </thead>
@@ -27,18 +28,18 @@ export const ResultsTable = ({ fragments }: ResultsTableProps) => {
                     {fragments.map((frag) => (
                         <tr
                             key={frag.n}
-                            className="hover:bg-green-900/20 transition-colors border-b border-green-900/30"
+                            className="hover:bg-green-900/5 transition-colors border-b border-green-900/10"
                         >
-                            <td className="py-2 px-4 text-green-300 font-medium">{frag.n}</td>
-                            <td className="py-2 px-4 text-green-400">{frag.length}</td>
-                            <td className="py-2 px-4 opacity-50">{frag.id}</td>
+                            <td className="py-2 px-4 text-green-600 font-medium">{frag.n}</td>
+                            <td className="py-2 px-4 text-green-500">{frag.length}</td>
+                            <td className="py-2 px-4 opacity-30">{frag.id}</td>
                             <td
-                                className={`py-2 px-4 ${frag.mf ? "text-yellow-500" : "text-red-500"
+                                className={`py-2 px-4 ${frag.mf ? "text-yellow-600" : "text-green-800"
                                     }`}
                             >
                                 {frag.mf}
                             </td>
-                            <td className="py-2 px-4 text-green-400">{frag.offset}</td>
+                            <td className="py-2 px-4 text-green-500">{frag.offset}</td>
                         </tr>
                     ))}
                 </tbody>
