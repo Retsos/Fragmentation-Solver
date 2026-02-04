@@ -43,6 +43,51 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+.glitch {
+  position: relative;
+  animation: glitch-skew 1s infinite linear alternate-reverse;
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+}
+
+.glitch::before {
+  left: 2px;
+  text-shadow: -2px 0 #00ff88;
+  clip-path: inset(0 0 60% 0);
+  animation: glitch-top 1s infinite linear alternate-reverse;
+}
+
+.glitch::after {
+  left: -2px;
+  text-shadow: -2px 0 #008844;
+  clip-path: inset(60% 0 0 0);
+  animation: glitch-bottom 1.2s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-top {
+  0% { transform: translate(0); }
+  50% { transform: translate(-2px, -2px); }
+  100% { transform: translate(2px, 2px); }
+}
+
+@keyframes glitch-bottom {
+  0% { transform: translate(0); }
+  50% { transform: translate(2px, 2px); }
+  100% { transform: translate(-2px, -2px); }
+}
+
+@keyframes glitch-skew {
+  0% { transform: skew(0deg); }
+  50% { transform: skew(1deg); }
+  100% { transform: skew(-1deg); }
+}
+
+
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
@@ -79,48 +124,37 @@
 }
 
 .dark {
-    /* THE MATRIX PALETTE - FIXED FOR TAILWIND V4 */
-    
-    --background: hsl(120 50% 2%); /* Σχεδόν μαύρο */
-    --foreground: hsl(120 100% 50%); /* Νέον Πράσινο */
-
-    /* Cards & Popovers */
-    --card: hsl(120 50% 3%);
-    --card-foreground: hsl(120 100% 50%);
-    --popover: hsl(120 50% 3%);
-    --popover-foreground: hsl(120 100% 50%);
-
-    /* Primary elements */
-    --primary: hsl(120 100% 50%);
-    --primary-foreground: hsl(0 0% 0%);
-
-    /* Secondary elements */
-    --secondary: hsl(120 30% 10%);
-    --secondary-foreground: hsl(120 100% 50%);
-
-    /* Muted elements */
-    --muted: hsl(120 30% 7%);
-    --muted-foreground: hsl(120 50% 35%);
-
-    /* Accents */
-    --accent: hsl(120 40% 15%);
-    --accent-foreground: hsl(120 100% 50%);
-
-    /* Destructive */
-    --destructive: hsl(0 100% 50%);
-    --destructive-foreground: hsl(0 0% 100%);
-
-    /* Borders & Inputs */
-    --border: hsl(120 50% 20%);
-    --input: hsl(120 50% 20%);
-    --ring: hsl(120 100% 50%);
-    
-    /* Charts - Αν χρειαστούν */
-    --chart-1: hsl(120 100% 50%);
-    --chart-2: hsl(120 80% 40%);
-    --chart-3: hsl(120 60% 30%);
-    --chart-4: hsl(120 40% 20%);
-    --chart-5: hsl(120 20% 10%);
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
 }
 
 @layer base {
@@ -136,8 +170,4 @@ input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
-}
-
-input[type="number"] {
-  -moz-appearance: textfield;
 }
